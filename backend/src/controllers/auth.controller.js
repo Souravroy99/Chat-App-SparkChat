@@ -14,23 +14,31 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
+    
     const user = await User.findOne({ email });
-
+    
     if (user) return res.status(400).json({ message: "Email already exists" });
-
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
+    
     const newUser = new User({
       fullName,
       email,
       password: hashedPassword,
     });
-
+    
+    console.log('     RANCHO         ');
+    console.log(newUser ) ;
+    await newUser.save();
+    
+    
     if (newUser) {
-      // generate jwt token here
+
       generateToken(newUser._id, res);
-      await newUser.save();
+      
+      // generate jwt token here
+      
 
       res.status(201).json({
         _id: newUser._id,
